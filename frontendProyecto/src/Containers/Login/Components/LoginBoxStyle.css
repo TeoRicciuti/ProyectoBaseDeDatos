@@ -1,0 +1,61 @@
+    .LoginBox {
+      width: 550px;
+      background: #d8d8d8;
+      border: 2px solid #222;
+      padding: 40px 25px 60px;
+      font-family: "Anton", sans-serif;
+      box-shadow: 0 6px 6px rgb(36, 36, 36);
+      border-radius: 5px;
+    }
+
+    .LoginBox h1 {
+      text-align: center;
+      font-size: 2.3rem;
+      margin-bottom: 40px;
+    }
+
+    .LoginBox input {
+      width: 90%;
+      background: #fff;
+      border: none;
+      padding: 22px 28px;
+      font-size: 1.1rem;
+      margin-bottom: 35px;
+      font-family: "Anton", sans-serif;
+    }
+
+    .LoginBox input::placeholder {
+      color: #8f8f8f;
+    }
+
+    .LoginBox button {
+      width: 100%;
+      background: #0072ce;
+      border: none;
+      padding: 18px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background .25s ease;
+      color: #000;
+      font-family: "Anton", sans-serif;
+    }
+
+    .LoginBox button:hover {
+      background: #005aa2;
+    }
+
+    .LinkRegistrarse {
+      display: flex;
+      justify-content: center;
+      color: rgb(64, 64, 64);
+      text-decoration: none;
+      margin-top: 10px;
+    }
+
+    .RegistrarseSpan {
+      font-weight: 700;
+      cursor: pointer;
+      color: #005aa2;
+      text-decoration: none;
+      margin-left:3px;
+    }
