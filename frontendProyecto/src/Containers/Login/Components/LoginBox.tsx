@@ -46,6 +46,7 @@ const LoginBox = () => {
           type="text"
           placeholder="Nombre de usuario"
           required
+          name="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />

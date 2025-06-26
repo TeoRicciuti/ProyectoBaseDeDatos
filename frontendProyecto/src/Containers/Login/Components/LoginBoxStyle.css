@@ -45,8 +45,6 @@
     }
 
     .LinkRegistrarse {
-      display: flex;
-      justify-content: center;
       color: rgb(64, 64, 64);
       text-decoration: none;
       margin-top: 10px;
