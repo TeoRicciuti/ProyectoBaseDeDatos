@@ -1,18 +1,15 @@
 const jwt = require("jsonwebtoken");
 
-const verificarToken = (req, res, next) => {
+module.exports = (req, res, next) => {
   const authHeader = req.headers.authorization;
-  const token = authHeader?.split(" ")[1];
+  if (!authHeader) return res.status(401).json({ error: "Token requerido" });
 
-  if (!token) return res.status(401).json({ error: "Token faltante" });
-
+  const token = authHeader.split(" ")[1];
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
+    const decoded = jwt.verify(token, "secreto_waso");
+    req.userId = decoded.id;
     next();
-  } catch (err) {
-    return res.status(403).json({ error: "Token inválido" });
+  } catch {
+    res.status(401).json({ error: "Token inválido" });
   }
 };
-
-module.exports = verificarToken;

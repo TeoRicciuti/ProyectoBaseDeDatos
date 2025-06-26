@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
 // Obtener todos los mensajes entre dos usuarios
 
 // Crear mensaje
-router.post("/",verificarToken, async (req, res) => {
+router.post("/", async (req, res) => {
   const { autor, contenido, username } = req.body;
   if (!username || !contenido) {
     return res.status(400).json({ error: "Faltan datos" });

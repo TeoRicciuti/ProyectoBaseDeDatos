@@ -25,7 +25,7 @@ const LoginBox = () => {
         // Guarda token + datos básicos
         localStorage.setItem("token", data.token);
         localStorage.setItem("username", data.user.username);
-        localStorage.setItem("userId", data.user.id);
+       
 
         navigate("/chat"); // o la ruta que muestre el chat
       } else {

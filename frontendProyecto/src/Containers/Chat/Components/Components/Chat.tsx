@@ -4,37 +4,47 @@ import "./ChatStyle.css";
 // Tipado mínimo del mensaje que devuelve tu API
 interface Message {
   _id: string;
-  texto: string;
+  contenido: string;
   timestamp: string;
-  author: {
-    _id: string;
-    username: string;
-  };
+  autor: string;
+  username: string;
+  
 }
 
 const ChatBD: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [texto, setTexto] = useState("");
+  const [contenido, setContenido] = useState("");
+  const [username, setUsername] = useState("");
+const [autor, setAutor] = useState(""); // ID válido de Mongo
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   // Token guardado en el login
   const token = localStorage.getItem("token");
 
+  useEffect(() => {
+  setUsername(localStorage.getItem("username") || "");
+  setAutor(localStorage.getItem("userId") || "");
+}, []);
+
   /* ───────────────────────────── fetch mensajes ───────────────────────────── */
   const fetchMessages = async () => {
-    try {
-      const res = await fetch("http://localhost:5000/api/messages");
-      const data = await res.json();
-      if (res.ok) setMessages(data);
-    } catch (err) {
-      console.error("Error al obtener mensajes", err);
-    }
-  };
+  try {
+    const res = await fetch("http://localhost:5000/api/messages", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await res.json();
+    if (res.ok) setMessages(data);
+  } catch (err) {
+    console.error("Error al obtener mensajes", err);
+  }
+};
 
   /* ───────────────────────────── enviar mensaje ───────────────────────────── */
   const sendMessage = async (e: FormEvent) => {
     e.preventDefault();
-    if (!texto.trim()) return;
+    if (!contenido.trim()) return;
     try {
       const res = await fetch("http://localhost:5000/api/messages", {
         method: "POST",
@@ -42,12 +52,16 @@ const ChatBD: React.FC = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ contenido: texto }),
+        body: JSON.stringify({
+  contenido: contenido,
+  username: username,
+  autor: autor, // solo si tu modelo espera esto
+}),
       });
       const data: Message = await res.json();
       if (res.ok) {
         setMessages((prev) => [...prev, data]);
-        setTexto("");
+        setContenido("");
       }
     } catch (err) {
       console.error("Error al enviar mensaje", err);
@@ -57,7 +71,7 @@ const ChatBD: React.FC = () => {
   /* ───────────────────────────── efecto inicial ───────────────────────────── */
   useEffect(() => {
     fetchMessages();
-    // Refresco cada 5 s estilo polling sencillo
+    // Refresco cada 5s estilo polling sencillo
     const interval = setInterval(fetchMessages, 5000);
     return () => clearInterval(interval);
   }, []);
@@ -75,15 +89,15 @@ const ChatBD: React.FC = () => {
   <div className="chat-messages">
     {messages.map((m) => (
       <div key={m._id} className="chat-message">
-        <div className="chat-avatar">{m.author.username[0]}</div>
+        
         <div className="chat-bubble">
           <div className="chat-meta">
-            <span className="chat-username">{m.author.username}</span>
+            <span className="chat-username">{m.username}</span>
             <span className="chat-time">
               {new Date(m.timestamp).toLocaleTimeString()}
             </span>
           </div>
-          <p>{m.texto}</p>
+          <p>{m.contenido}</p>
         </div>
       </div>
     ))}
@@ -95,10 +109,10 @@ const ChatBD: React.FC = () => {
       type="text"
       className="chat-input"
       placeholder="Escribe tu mensaje..."
-      value={texto}
-      onChange={(e) => setTexto(e.target.value)}
+      value={contenido}
+      onChange={(e) => setContenido(e.target.value)}
     />
-    <button type="submit" className="chat-button" disabled={!texto.trim()}>
+    <button type="submit" className="chat-button" disabled={!contenido.trim()}>
       Enviar
     </button>
   </form>
