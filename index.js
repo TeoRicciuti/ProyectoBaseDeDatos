@@ -18,7 +18,9 @@ mongoose.connect(process.env.MONGO_URI)
 // Rutas
 const messageRoutes = require("./routes/messages");
 app.use("/api/messages", messageRoutes);
+app.use("/api/auth", require("./routes/auth")); // 👈 NUEVA RUTA
 
 app.listen(PORT, () => {
   console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
+

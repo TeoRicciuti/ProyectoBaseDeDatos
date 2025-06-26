@@ -1,23 +1,25 @@
 const express = require("express");
 const router = express.Router();
 const Message = require("../models/message");
+const verificarToken = require("../middleware/auth");
 
-// Obtener todos los mensajes entre dos usuarios
-router.get("/:sender/:receiver", async (req, res) => {
-  const { sender, receiver } = req.params;
-  const messages = await Message.find({
-    $or: [
-      { sender, receiver },
-      { sender: receiver, receiver: sender },
-    ],
-  }).sort({ timestamp: 1 });
-  res.json(messages);
+router.get("/", async (req, res) => {
+  const mensajes = await Message.find()
+    .populate("autor", "username") // Trae solo username
+    .sort({ timestamp: 1 });
+
+  res.json(mensajes);
 });
 
+// Obtener todos los mensajes entre dos usuarios
+
 // Crear mensaje
-router.post("/", async (req, res) => {
-  const { sender, receiver, content } = req.body;
-  const newMessage = new Message({ sender, receiver, content });
+router.post("/",verificarToken, async (req, res) => {
+  const { autor, contenido, username } = req.body;
+  if (!username || !contenido) {
+    return res.status(400).json({ error: "Faltan datos" });
+  }
+  const newMessage = new Message({ autor, contenido, username });
   await newMessage.save();
   res.status(201).json(newMessage);
 });
