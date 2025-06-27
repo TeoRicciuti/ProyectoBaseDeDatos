@@ -13,7 +13,7 @@ const LoginBox = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {   // ⬅ puerto de tu backend
+      const res = await fetch("https://proyectobasededatos-ir9x.onrender.com/api/auth/login", {   // ⬅ puerto de tu backend
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username }),                               // ⬅ solo username

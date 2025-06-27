@@ -29,7 +29,7 @@ const [autor, setAutor] = useState(""); // ID válido de Mongo
   /* ───────────────────────────── fetch mensajes ───────────────────────────── */
   const fetchMessages = async () => {
   try {
-    const res = await fetch("http://localhost:5000/api/messages", {
+    const res = await fetch("https://proyectobasededatos-ir9x.onrender.com/api/messages", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -46,7 +46,7 @@ const [autor, setAutor] = useState(""); // ID válido de Mongo
     e.preventDefault();
     if (!contenido.trim()) return;
     try {
-      const res = await fetch("http://localhost:5000/api/messages", {
+      const res = await fetch("https://proyectobasededatos-ir9x.onrender.com/api/messages", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
