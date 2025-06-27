@@ -42,31 +42,41 @@ const [autor, setAutor] = useState(""); // ID válido de Mongo
 };
 
   /* ───────────────────────────── enviar mensaje ───────────────────────────── */
-  const sendMessage = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!contenido.trim()) return;
-    try {
-      const res = await fetch("https://proyectobasededatos-ir9x.onrender.com/api/messages", {
+const sendMessage = async (e: FormEvent) => {
+  e.preventDefault();
+
+  if (!contenido.trim()) return;      // evita vacíos
+  if (!token) {                       // evita llamadas sin token
+    console.error("No hay token; inicia sesión primero");
+    return;
+  }
+
+  try {
+    const res = await fetch(
+      "https://proyectobasededatos-ir9x.onrender.com/api/messages",
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,   // ✔️ el backend leerá el id
         },
-        body: JSON.stringify({
-  contenido: contenido,
-  username: username,
-  autor: autor, // solo si tu modelo espera esto
-}),
-      });
-      const data: Message = await res.json();
-      if (res.ok) {
-        setMessages((prev) => [...prev, data]);
-        setContenido("");
+        body: JSON.stringify({ contenido }),   // ✔️ solo contenido
       }
-    } catch (err) {
-      console.error("Error al enviar mensaje", err);
+    );
+
+    if (!res.ok) {
+      // si el backend devuelve 400, 401, 500, etc.
+      const errorMsg = await res.text();       // evita el “Unexpected token '<'”
+      throw new Error(`Error ${res.status}: ${errorMsg}`);
     }
-  };
+
+    const data: Message = await res.json();
+    setMessages(prev => [...prev, data]);
+    setContenido("");
+  } catch (err) {
+    console.error("Error al enviar mensaje:", err);
+  }
+};
 
   /* ───────────────────────────── efecto inicial ───────────────────────────── */
   useEffect(() => {

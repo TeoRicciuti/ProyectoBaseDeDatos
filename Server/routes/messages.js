@@ -1,33 +1,50 @@
 const express = require("express");
-const router = express.Router();
+const router  = express.Router();
 const Message = require("../models/message");
-const verificarToken = require("../middleware/auth");
+const verificarToken = require("../middleware/auth");   // ← ya lo tenías
 
+// ───────────── GET: todos los mensajes ─────────────
 router.get("/", async (req, res) => {
-  const mensajes = await Message.find()
-    .populate("autor", "username") // Trae solo username
-    .sort({ timestamp: 1 });
-
-  res.json(mensajes);
-});
-
-// Obtener todos los mensajes entre dos usuarios
-
-// Crear mensaje
-router.post("/", async (req, res) => {
-  const { autor, contenido, username } = req.body;
-  if (!username || !contenido) {
-    return res.status(400).json({ error: "Faltan datos" });
+  try {
+    const mensajes = await Message.find()
+      .populate("autor", "username")   // solo trae username del autor
+      .sort({ timestamp: 1 });
+    res.json(mensajes);
+  } catch (err) {
+    console.error("Error al listar mensajes:", err);
+    res.status(500).json({ error: "Error del servidor" });
   }
-  const newMessage = new Message({ autor, contenido, username });
-  await newMessage.save();
-  res.status(201).json(newMessage);
 });
 
-// Eliminar mensaje
-router.delete("/:id", async (req, res) => {
-  await Message.findByIdAndDelete(req.params.id);
-  res.sendStatus(204);
+// ───────────── POST: crear mensaje ─────────────
+router.post("/", verificarToken, async (req, res) => { // ← ahora con auth
+  try {
+    const { contenido } = req.body;
+    if (!contenido) {
+      return res.status(400).json({ error: "Falta contenido" });
+    }
+
+    const nuevo = await Message.create({
+      autor: req.user.id,   // ← viene del token decodificado
+      contenido,
+    });
+
+    res.status(201).json(nuevo);
+  } catch (err) {
+    console.error("Error al crear mensaje:", err);
+    res.status(500).json({ error: "Error del servidor" });
+  }
+});
+
+// ───────────── DELETE: eliminar mensaje ─────────────
+router.delete("/:id", verificarToken, async (req, res) => {
+  try {
+    await Message.findByIdAndDelete(req.params.id);
+    res.sendStatus(204);
+  } catch (err) {
+    console.error("Error al borrar mensaje:", err);
+    res.status(500).json({ error: "Error del servidor" });
+  }
 });
 
 module.exports = router;
