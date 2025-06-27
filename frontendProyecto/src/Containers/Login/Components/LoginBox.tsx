@@ -7,6 +7,7 @@ import "./LoginBoxStyle.css";
 const LoginBox = () => {
   // solo username
   const [username, setUsername] = useState("");
+  const [mostrarLink, setMostrarLink] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -23,11 +24,13 @@ const LoginBox = () => {
 
       if (res.ok) {
         // Guarda token + datos básicos
-        localStorage.setItem("token", data.token);
+        sessionStorage.setItem("token", data.token);
         localStorage.setItem("username", data.user.username);
+        localStorage.setItem("userId", data.user._id)
        
 
-        navigate("/chat"); // o la ruta que muestre el chat
+        navigate("/chat", {replace: true}); // o la ruta que muestre el chat
+
       } else {
         alert(data.error || "No se pudo iniciar sesión");
       }
@@ -45,10 +48,9 @@ const LoginBox = () => {
         <input
           type="text"
           placeholder="Nombre de usuario"
-          required
-          name="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          required
         />
 
         <button type="submit">Entrar</button>
@@ -56,6 +58,13 @@ const LoginBox = () => {
         {/* En este flujo no necesitas registro aparte;
             si el usuario no existe, el backend lo crea */}
       </form>
+
+{mostrarLink && (
+        <a href="/chat" style={{ display: "inline-block", marginTop: "10px", padding: "8px 12px", backgroundColor: "#4caf50", color: "white", borderRadius: "4px", textDecoration: "none" }}>
+          Vamo a chatea lindo
+        </a>
+      )}
+
     </div>
   );
 };

@@ -3,12 +3,12 @@ import Login from './Containers/Login';
 import ChatBD from './Containers/Chat/Components/Components/Chat';
 
 function App() {
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<Navigate to={ token ? "/chat" : "/login"} replace />} />
 
         {/* Protegemos /login para que no puedan entrar si ya están logueados */}
         <Route
